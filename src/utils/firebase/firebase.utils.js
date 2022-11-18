@@ -38,10 +38,6 @@ googleProvider.setCustomParameters({
 });
 
 export const auth = getAuth();
-// export const signInWithGooglePopup = () =>
-//   signInWithPopup(auth, googleProvider);
-// export const signInWithGoogleRedirect = () =>
-//   signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
 
@@ -63,11 +59,20 @@ export const addCollectionAndDocuments = async (
 };
 
 export const getCategoriesAndDocuments = async () => {
-  const collectionRef = collection(db, 'categories');
-  const q = query(collectionRef);
+  const response = await fetch('http://localhost:4000/items');
+  const data = await response.json();
 
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((docSnapshot) => docSnapshot.data());
+  var items = {};
+  data.forEach(d => {
+    let categoryName = d.category.toLowerCase();
+    delete d.category;
+    if(items[categoryName] == undefined)
+    {
+      items[categoryName] = [];
+    }
+    items[categoryName].push(d);
+  })
+ return items;
 };
 
 export const createUserDocumentFromAuth = async (
