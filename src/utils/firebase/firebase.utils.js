@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { Subject } from 'rxjs';
 import {
   getAuth,
   signInWithRedirect,
@@ -19,6 +20,7 @@ import {
   query,
   getDocs,
 } from 'firebase/firestore';
+import localStorage from 'redux-persist/es/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBCwX_TQfG-tVwS9fpjDg0LbzFlA5eEwis",
@@ -41,23 +43,6 @@ export const auth = getAuth();
 
 export const db = getFirestore();
 
-export const addCollectionAndDocuments = async (
-  collectionKey,
-  objectsToAdd,
-  field
-) => {
-  const collectionRef = collection(db, collectionKey);
-  const batch = writeBatch(db);
-
-  objectsToAdd.forEach((object) => {
-    const docRef = doc(collectionRef, object.title.toLowerCase());
-    batch.set(docRef, object);
-  });
-
-  await batch.commit();
-  console.log('done');
-};
-
 export const getCategoriesAndDocuments = async () => {
   const response = await fetch('http://localhost:4000/items');
   const data = await response.json();
@@ -66,13 +51,12 @@ export const getCategoriesAndDocuments = async () => {
   data.forEach(d => {
     let categoryName = d.category.toLowerCase();
     delete d.category;
-    if(items[categoryName] == undefined)
-    {
+    if (items[categoryName] == undefined) {
       items[categoryName] = [];
     }
     items[categoryName].push(d);
   })
- return items;
+  return items;
 };
 
 export const createUserDocumentFromAuth = async (
@@ -104,19 +88,51 @@ export const createUserDocumentFromAuth = async (
   return userDocRef;
 };
 
-export const createAuthUserWithEmailAndPassword = async (email, password) => {
-  if (!email || !password) return;
+export const createAuthUserWithEmailAndPassword = async (displayName, newEmail, newPassword) => {
+  if (!displayName || !newEmail || !newPassword) return;
 
-  return await createUserWithEmailAndPassword(auth, email, password);
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: displayName, password: newPassword, email: newEmail })
+  };
+
+  const response = await fetch('http://localhost:4000/user', requestOptions);
+  const data = await response.json();
+
+  //return await createUserWithEmailAndPassword(auth, email, password);
 };
 
-export const signInAuthUserWithEmailAndPassword = async (email, password) => {
-  if (!email || !password) return;
+export const signInAuthUserWithEmailAndPassword = async (userName, password) => {
+  if (!userName || !password) return;
 
-  return await signInWithEmailAndPassword(auth, email, password);
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userName: userName, password: password })
+  };
+
+  const response = await fetch('http://localhost:4000/loggin', requestOptions);
+  if (!response.ok){
+    throw new Error("InvalidArgumentExcpetion");
+  }
+  const data = await response.json();
+  localStorage.setItem("token", data.token)
+
+
+  //return await signInWithEmailAndPassword(auth, email, password);
 };
 
-export const signOutUser = async () => await signOut(auth);
 
-export const onAuthStateChangedListener = (callback) =>
-  onAuthStateChanged(auth, callback);
+
+export const signOutUser = async () => {
+  localStorage.setItem("token", "")
+
+  //await signOut(auth)
+};
+
+// export const onAuthStateChangedListener = (callback) =>{
+//   var subject = new Subject();
+//   return subject.subscribe(callback.call(user))
+// }
+//   //onAuthStateChanged(auth, callback);
