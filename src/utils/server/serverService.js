@@ -1,9 +1,15 @@
 
 import localStorage from 'redux-persist/es/storage';
 
-
+let token = "";
 export const getCategories = async () => {
-  const response = await fetch('http://localhost:4000/items');
+
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json','Authorization': token },
+  };
+
+  const response = await fetch('http://localhost:4000/items',requestOptions);
   const data = await response.json();
 
   var items = {};
@@ -24,7 +30,7 @@ export const createAuthUserWithEmailAndPassword = async (displayName, newEmail, 
 
   const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json','Authorization': token },
     body: JSON.stringify({ name: displayName, password: newPassword, email: newEmail })
   };
 
@@ -37,7 +43,7 @@ export const signInAuthUserWithEmailAndPassword = async (userName, password) => 
 
   const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json','Authorization': token },
     body: JSON.stringify({ userName: userName, password: password })
   };
 
@@ -47,11 +53,13 @@ export const signInAuthUserWithEmailAndPassword = async (userName, password) => 
   }
   const data = await response.json();
   localStorage.setItem("token", data.token)
+  token = `Bearer ${data.token}`;
 };
 
 
 
 export const signOutUser = async () => {
   localStorage.setItem("token", "")
+  token = "";
 };
 
