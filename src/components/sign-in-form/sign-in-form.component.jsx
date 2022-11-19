@@ -5,7 +5,7 @@ import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
 
 import {
   signInAuthUserWithEmailAndPassword,
-} from '../../utils/firebase/firebase.utils';
+} from '../../utils/server/serverService';
 import { useDispatch } from 'react-redux';
 import { setCurrentUser } from '../../store/user/user.action';
 
