@@ -5,18 +5,22 @@ import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
 
 import {
   signInAuthUserWithEmailAndPassword,
-} from '../../utils/firebase/firebase.utils';
+} from '../../utils/server/serverService';
+import { useDispatch } from 'react-redux';
+import { setCurrentUser } from '../../store/user/user.action';
+
 
 import { SignInContainer, ButtonsContainer } from './sign-in-form.styles';
 
 const defaultFormFields = {
-  email: '',
+  userName: '',
   password: '',
 };
 
 const SignInForm = () => {
+  const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const { email, password } = formFields;
+  const { userName, password } = formFields;
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -26,11 +30,12 @@ const SignInForm = () => {
     event.preventDefault();
 
     try {
-      await signInAuthUserWithEmailAndPassword(email, password);
+      await signInAuthUserWithEmailAndPassword(userName, password);
       resetFormFields();
     } catch (error) {
       console.log('user sign in failed', error);
     }
+    dispatch(setCurrentUser(userName));
   };
 
   const handleChange = (event) => {
@@ -42,15 +47,15 @@ const SignInForm = () => {
   return (
     <SignInContainer>
       <h2>Already have an account?</h2>
-      <span>Sign in with your email and password</span>
+      <span>Sign in with your user name and password</span>
       <form onSubmit={handleSubmit}>
         <FormInput
-          label='Email'
-          type='email'
+          label='user name'
+          type='text'
           required
           onChange={handleChange}
-          name='email'
-          value={email}
+          name='userName'
+          value={userName}
         />
 
         <FormInput
