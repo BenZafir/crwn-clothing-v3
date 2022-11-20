@@ -2,7 +2,23 @@
 import localStorage from 'redux-persist/es/storage';
 
 let token = "";
+
+
+
 export const getCategories = async () => {
+
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json','Authorization': token },
+  };
+
+  const response = await fetch('http://localhost:4000/categories',requestOptions);
+  const data = await response.json();
+  return data;
+};
+
+
+export const getItems = async () => {
 
   const requestOptions = {
     method: 'GET',
