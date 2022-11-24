@@ -32,10 +32,10 @@ const SignInForm = () => {
     try {
       await signInAuthUserWithEmailAndPassword(userName, password);
       resetFormFields();
+      dispatch(setCurrentUser(userName));
     } catch (error) {
       console.log('user sign in failed', error);
     }
-    dispatch(setCurrentUser(userName));
   };
 
   const handleChange = (event) => {

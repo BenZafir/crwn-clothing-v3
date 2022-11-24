@@ -1,7 +1,8 @@
-
 import localStorage from 'redux-persist/es/storage';
 
-let token = "";
+let token;
+localStorage.getItem("token")
+.then(data => token=data);
 
 
 
@@ -27,7 +28,9 @@ export const getItems = async () => {
 
   const response = await fetch('http://localhost:4000/items',requestOptions);
   const data = await response.json();
-
+  if(response.status == '404'){
+    return data;
+  }
   var items = {};
   data.forEach(d => {
     let categoryName = d.category.toLowerCase();
@@ -51,6 +54,9 @@ export const createAuthUserWithEmailAndPassword = async (displayName, newEmail, 
   };
 
   const response = await fetch('http://localhost:4000/user', requestOptions);
+  if(response.status != 200){
+    throw new Error("already-in-use");
+  }
   const data = await response.json();
 };
 
@@ -64,7 +70,7 @@ export const signInAuthUserWithEmailAndPassword = async (userName, password) => 
   };
 
   const response = await fetch('http://localhost:4000/loggin', requestOptions);
-  if (!response.ok){
+  if (response.status != 200){
     throw new Error("InvalidArgumentExcpetion");
   }
   const data = await response.json();
