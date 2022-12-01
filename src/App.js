@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { Routes, Route } from 'react-router-dom';
-
 import {
   onAuthStateChangedListener,
 } from './utils/server/serverService';
@@ -12,8 +11,16 @@ import Authentication from './routes/authentication/authentication.component';
 import Shop from './routes/shop/shop.component';
 import Checkout from './routes/checkout/checkout.component';
 import { setCurrentUser } from './store/user/user.action';
+import { isExpired, decodeToken } from "react-jwt";
+
 
 const App = () => {
+  const dispatch = useDispatch();
+  let token = localStorage.getItem("token")
+  const myDecodedToken = decodeToken(token);
+  if(myDecodedToken){
+    dispatch(setCurrentUser(myDecodedToken.name));
+  }
   return (
     <Routes>
       <Route path='/' element={<Navigation />}>
