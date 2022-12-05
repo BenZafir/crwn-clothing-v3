@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
-
+import Button, { BUTTON_TYPE_CLASSES } from '../../components/button/button.component';
+import { setNewOrder } from '../../utils/server/serverService';
 import {
   selectCartItems,
   selectCartTotal,
@@ -17,7 +18,7 @@ import {
 const Checkout = () => {
   const cartItems = useSelector(selectCartItems);
   const cartTotal = useSelector(selectCartTotal);
-
+  const addProductToCart = () => {setNewOrder(cartItems)};
   return (
     <CheckoutContainer>
       <CheckoutHeader>
@@ -41,6 +42,12 @@ const Checkout = () => {
         <CheckoutItem key={cartItem.id} cartItem={cartItem} />
       ))}
       <Total>Total: ${cartTotal}</Total>
+      <Button
+        buttonType={BUTTON_TYPE_CLASSES.inverted}
+        onClick={addProductToCart}
+      >
+        Buy Now!
+      </Button>
     </CheckoutContainer>
   );
 };

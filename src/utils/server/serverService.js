@@ -4,7 +4,24 @@ let token;
 localStorage.getItem("token")
 .then(data => token=data);
 
+export const setNewOrder = async (selectCartItems) => {
+  selectCartItems = selectCartItems;
+  let itemsId =[];
+  selectCartItems.forEach(i => {
+    for (let index = 0; index < i.quantity; index++) {
+      itemsId.push(i.id)
+    }
+  })
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json','Authorization': token },
+    body: JSON.stringify({itemsId: itemsId })
+  };
 
+  const response = await fetch('http://localhost:4000/order',requestOptions);
+  const data = await response.json();
+  return data;
+};
 
 export const getCategories = async () => {
 
