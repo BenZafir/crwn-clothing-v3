@@ -1,7 +1,8 @@
 import { useState } from 'react';
-
+// import { Navigate, Link } from "react-router-dom";
 import FormInput from '../form-input/form-input.component';
 import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
+import { useNavigate } from "react-router-dom";
 
 import {
   signInAuthUserWithEmailAndPassword,
@@ -18,6 +19,7 @@ const defaultFormFields = {
 };
 
 const SignInForm = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { userName, password } = formFields;
@@ -26,21 +28,24 @@ const SignInForm = () => {
     setFormFields(defaultFormFields);
   };
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
       await signInAuthUserWithEmailAndPassword(userName, password);
       resetFormFields();
       dispatch(setCurrentUser(userName));
+      navigate("/")
+
     } catch (error) {
       console.log('user sign in failed', error);
+      alert('wrong user name or password')
     }
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
+    
     setFormFields({ ...formFields, [name]: value });
   };
 

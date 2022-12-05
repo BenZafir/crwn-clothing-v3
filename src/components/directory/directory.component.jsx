@@ -10,8 +10,12 @@ const Directory = () => {
   const [categories, setCategories] = useState(categoriesArray);
   useEffect(() => {
     const getCategoriesMap = async () => {
-      categoriesArray = await getCategories();
-      setCategories(categoriesArray);
+      try{
+        categoriesArray = await getCategories();
+        setCategories(categoriesArray);
+      } catch(error){
+        alert("failed to get the categories from server")
+      }
     };
     getCategoriesMap();
   }, []);

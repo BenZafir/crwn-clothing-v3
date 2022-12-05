@@ -31,6 +31,9 @@ export const getCategories = async () => {
   };
 
   const response = await fetch('http://localhost:4000/categories',requestOptions);
+  if(response.status != 200){
+    throw new Error("couldn't get the categories")
+  }
   const data = await response.json();
   return data;
 };
@@ -44,6 +47,9 @@ export const getItems = async () => {
   };
 
   const response = await fetch('http://localhost:4000/items',requestOptions);
+  if(response.status != 200){
+    throw new Error("couldn't get the items")
+  }
   const data = await response.json();
   if(response.status == '404'){
     return data;

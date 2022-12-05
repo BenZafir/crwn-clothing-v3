@@ -12,8 +12,12 @@ const Shop = () => {
 
   useEffect(() => {
     const getItemsMap = async () => {
-      const categoriesArray = await getItems('categories');
-      dispatch(setCategories(categoriesArray));
+      try{
+        const categoriesArray = await getItems('categories');
+        dispatch(setCategories(categoriesArray));
+      } catch(error){
+        alert("failed to get the items from server")
+      }
     };
 
     getItemsMap();
