@@ -23,6 +23,54 @@ export const setNewOrder = async (selectCartItems) => {
   return data;
 };
 
+
+export const deleteFromTable = async (tableString, td) => {
+
+  const requestOptions = {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json','Authorization': token },
+  };
+
+  const response = await fetch(`http://localhost:4000/${tableString}/${td.id}`,requestOptions);
+  if(response.status != 200){
+    throw new Error(`couldn't delete id: ${td.id} \nfrom table: ${tableString}`)
+  }
+  let data = await response.json();
+  return data;
+};
+
+export const updateValueInTable = async (tableString, object) => {
+
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json','Authorization': token },
+    body: JSON.stringify(object)
+  };
+
+  const response = await fetch(`http://localhost:4000/${tableString}/${object.id}`,requestOptions);
+  if(response.status != 200){
+    throw new Error(`couldn't update a value in table: ${tableString}`)
+  }
+  let data = await response.json();
+  return data;
+};
+
+export const setNewValueInTable = async (tableString, object) => {
+
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json','Authorization': token },
+    body: JSON.stringify(object)
+  };
+
+  const response = await fetch(`http://localhost:4000/${tableString}`,requestOptions);
+  if(response.status != 200){
+    throw new Error(`couldn't post a value in table: ${tableString}`)
+  }
+  let data = await response.json();
+  return data;
+};
+
 export const getCategories = async () => {
 
   const requestOptions = {
@@ -38,8 +86,45 @@ export const getCategories = async () => {
   return data;
 };
 
+export const getOrders = async () => {
 
-export const getItems = async () => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json','Authorization': token },
+  };
+
+  const response = await fetch('http://localhost:4000/orders',requestOptions);
+  if(response.status != 200){
+    throw new Error("couldn't get the categories")
+  }
+  const data = await response.json();
+  return data;
+};
+
+
+export const getUsers = async () => {
+
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json','Authorization': token },
+  };
+
+  const response = await fetch('http://localhost:4000/users',requestOptions);
+  if(response.status != 200){
+    throw new Error("couldn't get the usrs")
+  }
+  const data = await response.json();
+
+  var users = [];
+  data.forEach(d => {
+    //delete d.ordersId;
+    users.push(d);
+  })
+  return users;
+};
+
+
+export const getItems = async (isForAdminPage = false) => {
 
   const requestOptions = {
     method: 'GET',
@@ -51,18 +136,27 @@ export const getItems = async () => {
     throw new Error("couldn't get the items")
   }
   const data = await response.json();
-  if(response.status == '404'){
-    return data;
-  }
+
   var items = {};
-  data.forEach(d => {
-    let categoryName = d.category.toLowerCase();
-    delete d.category;
-    if (items[categoryName] == undefined) {
-      items[categoryName] = [];
+  if(isForAdminPage){
+    if(!items.list){
+      items.list =[];
     }
-    items[categoryName].push(d);
-  })
+    data.forEach(d => {
+      delete d.imageUrl;
+      items.list.push(d);
+    })
+  }
+  else{
+    data.forEach(d => {
+      let categoryName = d.category.toLowerCase();
+      delete d.category;
+      if (items[categoryName] == undefined) {
+        items[categoryName] = [];
+      }
+      items[categoryName].push(d);
+    })
+  }
   return items;
 };
 
@@ -99,6 +193,7 @@ export const signInAuthUserWithEmailAndPassword = async (userName, password) => 
   const data = await response.json();
   localStorage.setItem("token", data.token)
   token = `Bearer ${data.token}`;
+  return data.token;
 };
 
 
