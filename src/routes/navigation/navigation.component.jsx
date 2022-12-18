@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import CartIcon from '../../components/cart-icon/cart-icon.component';
@@ -22,12 +22,14 @@ import { useDispatch } from 'react-redux';
 import { setCurrentUser } from '../../store/user/user.action';
 
 const Navigation = () => {
+  const navigate = useNavigate();
   const currentUser = useSelector(selectCurrentUser);
   const isCartOpen = useSelector(selectIsCartOpen);
   const dispatch = useDispatch();
   const signout = () =>{
     dispatch(setCurrentUser(""));
     signOutUser();
+    navigate("/")
   }
 
 
@@ -38,8 +40,12 @@ const Navigation = () => {
           <CrwnLogo className='logo' />
         </LogoContainer>
         <NavLinks>
+        {!currentUser?.isAdmin ? (
+            <NavLink as='span'></NavLink>
+          ) : (
+            <NavLink to='/admin'>ADMIN</NavLink>
+          )}
           <NavLink to='/shop'>SHOP</NavLink>
-
           {currentUser ? (
             <NavLink as='span' onClick={signout}>
               SIGN OUT

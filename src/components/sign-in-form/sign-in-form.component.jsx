@@ -1,9 +1,8 @@
 import { useState } from 'react';
-// import { Navigate, Link } from "react-router-dom";
 import FormInput from '../form-input/form-input.component';
 import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
 import { useNavigate } from "react-router-dom";
-
+import { isExpired, decodeToken } from "react-jwt";
 import {
   signInAuthUserWithEmailAndPassword,
 } from '../../utils/server/serverService';
@@ -32,9 +31,12 @@ const SignInForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await signInAuthUserWithEmailAndPassword(userName, password);
+      const token = await signInAuthUserWithEmailAndPassword(userName, password);
+      const myDecodedToken = decodeToken(token);
+
+      
       resetFormFields();
-      dispatch(setCurrentUser(userName));
+      dispatch(setCurrentUser({name: myDecodedToken.name, isAdmin: myDecodedToken.isAdmin }));
       navigate("/")
 
     } catch (error) {
