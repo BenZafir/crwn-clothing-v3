@@ -19,6 +19,7 @@ export const Body = styled.div`
   background-color: white;
   opacity: 0.7;
   position: absolute;
+  
 
   h2 {
     font-weight: bold;
@@ -36,10 +37,10 @@ export const Body = styled.div`
 
 export const DirectoryItemContainer = styled.div`
   min-width: 30%;
-  height: 240px;
+  height: 50%;
   flex: 1 1 auto;
   display: flex;
-  align-items: center;
+  align-items: end;
   justify-content: center;
   border: 1px solid black;
   margin: 0 7.5px 15px;
