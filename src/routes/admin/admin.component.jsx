@@ -89,9 +89,11 @@ function Admin() {
     }
   }
 
-  const onPustHandler = (table, arg) => {
+  const onPostHandler = (table, arg) => {
     setNewValueInTable(table, arg).then((result) => {
       setUpdateObject(result);
+    }).catch((err) => {
+      alert(err.message);
     });
   }
 
@@ -153,7 +155,7 @@ function Admin() {
           text={"this action add new item to DB"}
           buttonText={"Add Item"}
           buttonColor={"success"}
-          onSendHendler={(arg) => onPustHandler("item", arg)}
+          onSendHendler={(arg) => onPostHandler("item", arg)}
           customObject={itemUpdateObject}
         ></ActionCard>
         <ActionCard
@@ -162,7 +164,7 @@ function Admin() {
           text={"this action add new category to DB"}
           buttonText={"Add Category"}
           buttonColor={"success"}
-          onSendHendler={(arg) => onPustHandler("category", arg)}
+          onSendHendler={(arg) => onPostHandler("category", arg)}
           customObject={catrgoryUpdateObject}
         ></ActionCard>
       </Tab>
