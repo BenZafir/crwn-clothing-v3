@@ -34,12 +34,12 @@ const SignUpForm = () => {
     }
 
     try {
-      const { user } = await createAuthUserWithEmailAndPassword(
+      const data = await createAuthUserWithEmailAndPassword(
         displayName,
         email,
         password
       );
-
+      alert('create successfully')
       resetFormFields();
     } catch (error) {
       if (error.message === 'already-in-use') {
