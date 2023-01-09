@@ -7,7 +7,7 @@ import {
 } from '../../store/cart/cart.selector';
 
 import CheckoutItem from '../../components/checkout-item/checkout-item.component';
-import { clearItemFromCart } from '../../store/cart/cart.action';
+import { clearAllItemFromCart } from '../../store/cart/cart.action';
 import {
   CheckoutContainer,
   CheckoutHeader,
@@ -17,18 +17,21 @@ import {
 
 const Checkout = () => {
   const dispatch = useDispatch();
-  const clearItemHandler = (cartItems,cartItem) =>{
-    dispatch(clearItemFromCart(cartItems, cartItem));
+  const clearItemHandler = () =>{
+    dispatch(clearAllItemFromCart());
   }
   const cartItems = useSelector(selectCartItems);
   const cartTotal = useSelector(selectCartTotal);
-  const checkoutCart = () => {
+  let NewOrder;
+  const checkoutCart = async () => {
     if (cartItems.length > 0) {
-      setNewOrder(cartItems);
+      NewOrder = await setNewOrder(cartItems);
     }
-    cartItems.forEach(element => {
-      clearItemHandler(cartItems,element)
-    });
+    if(NewOrder.message){
+      alert('there was an error creating the order');
+    }
+    else{
+      clearItemHandler();};
   };
   return (
     <CheckoutContainer>
